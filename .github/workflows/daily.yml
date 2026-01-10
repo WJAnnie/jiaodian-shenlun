@@ -1,0 +1,30 @@
+name: 每日焦点访谈申论
+
+on:
+  schedule:
+    # 每天晚上9点运行（UTC 13:00 = 北京时间 21:00）
+    # 焦点访谈一般19:38播出，21点获取确保已更新
+    - cron: '0 13 * * *'
+  workflow_dispatch:  # 支持手动触发
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安装依赖
+        run: pip install requests
+
+      - name: 运行脚本
+        env:
+          SERVERCHAN_KEY: ${{ secrets.SERVERCHAN_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: python main.py
